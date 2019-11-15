@@ -10,7 +10,7 @@ import com.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-	
+
 	List<User> findByFirstNameIgnoreCase(String fname);
 
 	List<User> findByCityContainingIgnoreCase(String city);
