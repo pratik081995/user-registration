@@ -17,33 +17,23 @@ import lombok.*;
 @Table(name = "Users")
 public class User {
 
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
-
 	@Column(name = "first_name", nullable = false)
 	private String firstName;
-
 
 	@Column(name = "last_name", nullable = false)
 	private String lastName;
 
-	@Getter
-	@Setter
 	@Column(name = "email_address", nullable = false)
 	private String email;
 
-	@Getter
-	@Setter
 	@Column(name = "city_name", nullable = false)
 	private String city;
 
-	@Getter
-	@Setter
 	@Column(name = "mobile_number", nullable = false)
 	private String mobileNumber;
-
 
 }
