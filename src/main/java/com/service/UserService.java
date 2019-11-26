@@ -2,11 +2,10 @@ package com.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.exception.ResourceNotFoundException;
 import com.model.User;
 import com.repository.UserRepository;;
 
@@ -17,47 +16,57 @@ public class UserService {
 	private UserRepository userRepository;
 
 	public List<User> getAllUsers() {
-		List<User> users = userRepository.findAll();
-		return users.stream().collect(Collectors.toList());
+		return userRepository.findAll();
 	}
 
-	public Optional<User> getUser(int id) {
-		if (userRepository.findById(id).isPresent())
-			return userRepository.findById(id);
-		else
-			return Optional.empty();
+	public User getUser(int id) {
+		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
 	public User addUser(User user) {
 		return userRepository.save(user);
 	}
 
-	public User updateUser(int id, User user) throws Exception {
-		Optional<User> user1 = userRepository.findById(id);
-		if (user1.isPresent()) {
+	public User updateUser(int id, User newUser) {
+
+		return userRepository.findById(id).map(user -> {
+			user.setFirstName(newUser.getFirstName());
+			user.setLastName(newUser.getLastName());
+			user.setEmail(newUser.getEmail());
+			user.setCity(newUser.getCity());
+			user.setAge(newUser.getAge());
+			user.setMobileNumber(newUser.getMobileNumber());
 			return userRepository.save(user);
-		} else {
-			throw new Exception("User not found for this id : " + id);
-		}
+		}).orElseGet(() -> {
+			newUser.setId(id);
+			return userRepository.save(newUser);
+		});
 	}
 
 	public void deleteUser(int id) {
-		if (userRepository.findById(id).isPresent()) {
-			userRepository.deleteById(id);
-		} else {
-			Optional.empty();
-		}
+		(userRepository.findById(id)).orElseThrow(() -> new ResourceNotFoundException(id));
+		userRepository.deleteById(id);
+
+//		if (userRepository.findById(id).isPresent()) {
+//			userRepository.deleteById(id);
+//		} else {
+//			Optional.empty();
+//		}
 	}
 
-	public List<User> findByFirstName(String fname) throws Exception {
+	public List<User> findByFirstName(String fname) {
 		if (!userRepository.findByFirstNameIgnoreCase(fname).isEmpty())
 			return userRepository.findByFirstNameIgnoreCase(fname);
 		else {
-			throw new Exception("User not found with first name : "+ fname);
+			throw new ResourceNotFoundException(fname);
 		}
 	}
 
 	public List<User> findByCityName(String city) {
 		return userRepository.findByCityContainingIgnoreCase(city);
+	}
+
+	public List<User> findByCityAndAge(String city, String age) {
+		return userRepository.findByCityandAge(city, age);
 	}
 }

@@ -29,7 +29,7 @@ public class UserController {
 	}
 
 	@GetMapping("/users/{id}")
-	public Optional<User> getUser(@PathVariable int id) {
+	public User getUser(@PathVariable int id) {
 		return userService.getUser(id);
 	}
 
@@ -57,4 +57,10 @@ public class UserController {
 	public List<User> findUserByCityName(@PathVariable String city) {
 		return userService.findByCityName(city);
 	}
+
+	@GetMapping("/users/city/{city}/age/{age}")
+	public List<User> findUsersByCityAndAge(@PathVariable String city, @PathVariable String age) {
+		return userService.findByCityAndAge(city, age);
+	}
+
 }
